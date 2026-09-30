@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 import { MapPin, Phone, Mail, Clock } from "lucide-react"
 import { business, formattedAddress, hoursSummary } from "@/lib/business"
@@ -10,7 +11,9 @@ export function SiteFooter() {
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-6">
         <div className="grid gap-10 md:grid-cols-4">
           <div>
-            <h2 className="font-sans text-lg font-bold text-foreground">{business.name}</h2>
+            <Link href="/" aria-label={`${business.name} home`} className="inline-block">
+              <Image src="/logo.png" alt={business.name} width={1200} height={281} className="h-12 w-auto" />
+            </Link>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{business.tagline}</p>
             <ul className="mt-4 space-y-1.5 text-sm text-muted-foreground">
               {business.usps.map((usp) => (
