@@ -12,7 +12,7 @@ export function SiteFooter() {
         <div className="grid gap-10 md:grid-cols-4">
           <div>
             <Link href="/" aria-label={`${business.name} home`} className="inline-block">
-              <Image src="/logo.png" alt={business.name} width={1200} height={281} className="h-12 w-auto" />
+              <Image src="/logo.svg" alt={business.name} width={1200} height={281} className="h-12 w-auto" />
             </Link>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{business.tagline}</p>
             <ul className="mt-4 space-y-1.5 text-sm text-muted-foreground">
