@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   description: `${business.tagline}. Quality used cars, vans and commercial vehicles for sale in ${formattedAddress()}. 12 months MOT, full service and in-house warranty on every vehicle.`,
   icons: {
     icon: [
+      { url: '/favicon.ico', sizes: 'any' },
       { url: '/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },
       { url: '/icon-dark-32x32.png', media: '(prefers-color-scheme: dark)' },
       { url: '/icon.svg', type: 'image/svg+xml' },
@@ -28,6 +29,7 @@ export const metadata: Metadata = {
     description: business.tagline,
     url: business.siteUrl,
     siteName: business.name,
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: business.name }],
     locale: 'en_GB',
     type: 'website',
   },

@@ -24,14 +24,11 @@ export function SiteHeader() {
           <Image
             src="/logo.png"
             alt={business.name}
-            width={36}
-            height={36}
-            className="size-9 rounded-md"
+            width={1200}
+            height={281}
+            className="h-9 w-auto sm:h-11"
             priority
           />
-          <span className="font-sans text-base font-bold leading-tight text-foreground sm:text-lg">
-            {business.name}
-          </span>
         </Link>
 
         <nav className="hidden items-center gap-6 lg:flex" aria-label="Primary">
