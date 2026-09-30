@@ -7,6 +7,10 @@ import { VehicleTypeLinks } from "@/components/vehicle-type-links"
 import { FeaturedVehicles } from "@/components/featured-vehicles"
 import { CtaSection } from "@/components/cta-section"
 
+// Stock comes from Firestore. Admin changes revalidate this page immediately;
+// the interval is a safety net.
+export const revalidate = 3600
+
 export default function HomePage() {
   return (
     <>
