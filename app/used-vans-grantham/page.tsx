@@ -6,6 +6,7 @@ import { StockFilters } from "@/components/stock-filters"
 import { VehicleGrid } from "@/components/vehicle-grid"
 import { getPublicVehicles } from "@/lib/vehicles"
 import { business } from "@/lib/business"
+import { filterAndSortVehicles, type StockSearchParams } from "@/lib/stock-filter"
 
 export const metadata: Metadata = {
   title: `Used Vans for Sale in Grantham | ${business.name}`,
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 }
 
 interface PageProps {
-  searchParams: Promise<{ q?: string; make?: string; minPrice?: string; maxPrice?: string }>
+  searchParams: Promise<StockSearchParams>
 }
 
 export default async function UsedVansPage({ searchParams }: PageProps) {
@@ -22,17 +23,8 @@ export default async function UsedVansPage({ searchParams }: PageProps) {
   const vans = vehicles.filter((v) => v.vehicleType === "van")
   const makes = Array.from(new Set(vans.map((v) => v.make))).sort()
 
-  const filtered = vans.filter((vehicle) => {
-    if (params.make && params.make !== "all" && vehicle.make !== params.make) return false
-    if (params.minPrice && vehicle.price < Number(params.minPrice)) return false
-    if (params.maxPrice && vehicle.price > Number(params.maxPrice)) return false
-    if (params.q) {
-      const needle = params.q.toLowerCase()
-      const haystack = `${vehicle.make} ${vehicle.model} ${vehicle.variant} ${vehicle.bodyType}`.toLowerCase()
-      if (!haystack.includes(needle)) return false
-    }
-    return true
-  })
+  const filtered = filterAndSortVehicles(vans, params)
+  const availableCount = vans.filter((v) => v.status === "available").length
 
   return (
     <>
@@ -42,7 +34,7 @@ export default async function UsedVansPage({ searchParams }: PageProps) {
           <h1 className="font-heading text-3xl font-bold text-foreground">Used vans in Grantham</h1>
           <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
             Ready-to-work vans, supplied with 12 months MOT, a full service and our comprehensive in-house
-            warranty - {filtered.length} van{filtered.length === 1 ? "" : "s"} currently in stock.
+            warranty - {availableCount} van{availableCount === 1 ? "" : "s"} currently available.
           </p>
         </div>
 

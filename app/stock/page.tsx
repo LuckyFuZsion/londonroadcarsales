@@ -6,7 +6,7 @@ import { StockFilters } from "@/components/stock-filters"
 import { VehicleGrid } from "@/components/vehicle-grid"
 import { getPublicVehicles } from "@/lib/vehicles"
 import { business } from "@/lib/business"
-import type { VehicleType } from "@/lib/types"
+import { filterAndSortVehicles, type StockSearchParams } from "@/lib/stock-filter"
 
 export const metadata: Metadata = {
   title: `All Stock | ${business.name}`,
@@ -14,13 +14,7 @@ export const metadata: Metadata = {
 }
 
 interface StockPageProps {
-  searchParams: Promise<{
-    q?: string
-    type?: string
-    make?: string
-    minPrice?: string
-    maxPrice?: string
-  }>
+  searchParams: Promise<StockSearchParams>
 }
 
 export default async function StockPage({ searchParams }: StockPageProps) {
@@ -29,18 +23,8 @@ export default async function StockPage({ searchParams }: StockPageProps) {
 
   const makes = Array.from(new Set(vehicles.map((v) => v.make))).sort()
 
-  const filtered = vehicles.filter((vehicle) => {
-    if (params.type && params.type !== "all" && vehicle.vehicleType !== (params.type as VehicleType)) return false
-    if (params.make && params.make !== "all" && vehicle.make !== params.make) return false
-    if (params.minPrice && vehicle.price < Number(params.minPrice)) return false
-    if (params.maxPrice && vehicle.price > Number(params.maxPrice)) return false
-    if (params.q) {
-      const needle = params.q.toLowerCase()
-      const haystack = `${vehicle.make} ${vehicle.model} ${vehicle.variant} ${vehicle.bodyType}`.toLowerCase()
-      if (!haystack.includes(needle)) return false
-    }
-    return true
-  })
+  const filtered = filterAndSortVehicles(vehicles, params)
+  const availableCount = vehicles.filter((v) => v.status === "available").length
 
   return (
     <>
@@ -49,7 +33,7 @@ export default async function StockPage({ searchParams }: StockPageProps) {
         <div>
           <h1 className="font-heading text-3xl font-bold text-foreground">All stock</h1>
           <p className="mt-1.5 text-sm text-muted-foreground">
-            {filtered.length} vehicle{filtered.length === 1 ? "" : "s"} available
+            {availableCount} vehicle{availableCount === 1 ? "" : "s"} available now, {filtered.length} shown
           </p>
         </div>
 

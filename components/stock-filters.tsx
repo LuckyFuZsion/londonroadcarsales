@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select"
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
 import { VEHICLE_TYPE_LABELS, type VehicleType } from "@/lib/types"
+import { PUBLIC_STATUS_LABELS } from "@/lib/stock-filter"
 
 interface StockFiltersProps {
   makes: string[]
@@ -40,16 +41,18 @@ export function StockFilters({ makes, lockedType }: StockFiltersProps) {
   const q = searchParams.get("q") ?? ""
   const make = searchParams.get("make") ?? "all"
   const type = lockedType ?? (searchParams.get("type") ?? "all")
+  const status = searchParams.get("status") ?? "all"
   const priceKey = `${searchParams.get("minPrice") ?? ""}-${searchParams.get("maxPrice") ?? ""}`
 
   const activeCount = useMemo(() => {
     let count = 0
     if (q) count++
     if (make !== "all") count++
+    if (status !== "all") count++
     if (!lockedType && type !== "all") count++
     if (searchParams.get("minPrice") || searchParams.get("maxPrice")) count++
     return count
-  }, [q, make, type, lockedType, searchParams])
+  }, [q, make, status, type, lockedType, searchParams])
 
   const updateParams = useCallback(
     (updates: Record<string, string>) => {
@@ -91,6 +94,23 @@ export function StockFilters({ makes, lockedType }: StockFiltersProps) {
             onChange={(e) => updateParams({ q: e.target.value })}
           />
         </div>
+      </div>
+
+      <div>
+        <Label className="text-xs font-medium text-muted-foreground">Availability</Label>
+        <Select value={status} onValueChange={(value) => updateParams({ status: value ?? "all" })}>
+          <SelectTrigger className="mt-1.5">
+            <SelectValue placeholder="All vehicles" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All vehicles</SelectItem>
+            {Object.entries(PUBLIC_STATUS_LABELS).map(([value, label]) => (
+              <SelectItem key={value} value={value}>
+                {label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {!lockedType ? (

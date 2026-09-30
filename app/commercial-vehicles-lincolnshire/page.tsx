@@ -6,6 +6,7 @@ import { StockFilters } from "@/components/stock-filters"
 import { VehicleGrid } from "@/components/vehicle-grid"
 import { getPublicVehicles } from "@/lib/vehicles"
 import { business } from "@/lib/business"
+import { filterAndSortVehicles, type StockSearchParams } from "@/lib/stock-filter"
 
 export const metadata: Metadata = {
   title: `Commercial Vehicles for Sale in Lincolnshire | ${business.name}`,
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 }
 
 interface PageProps {
-  searchParams: Promise<{ q?: string; make?: string; minPrice?: string; maxPrice?: string }>
+  searchParams: Promise<StockSearchParams>
 }
 
 export default async function CommercialVehiclesPage({ searchParams }: PageProps) {
@@ -22,17 +23,8 @@ export default async function CommercialVehiclesPage({ searchParams }: PageProps
   const commercial = vehicles.filter((v) => v.vehicleType === "commercial")
   const makes = Array.from(new Set(commercial.map((v) => v.make))).sort()
 
-  const filtered = commercial.filter((vehicle) => {
-    if (params.make && params.make !== "all" && vehicle.make !== params.make) return false
-    if (params.minPrice && vehicle.price < Number(params.minPrice)) return false
-    if (params.maxPrice && vehicle.price > Number(params.maxPrice)) return false
-    if (params.q) {
-      const needle = params.q.toLowerCase()
-      const haystack = `${vehicle.make} ${vehicle.model} ${vehicle.variant} ${vehicle.bodyType}`.toLowerCase()
-      if (!haystack.includes(needle)) return false
-    }
-    return true
-  })
+  const filtered = filterAndSortVehicles(commercial, params)
+  const availableCount = commercial.filter((v) => v.status === "available").length
 
   return (
     <>
@@ -42,8 +34,8 @@ export default async function CommercialVehiclesPage({ searchParams }: PageProps
           <h1 className="font-heading text-3xl font-bold text-foreground">Commercial vehicles in Lincolnshire</h1>
           <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
             Pickups, Lutons and work-ready commercials, supplied with 12 months MOT, a full service and our
-            comprehensive in-house warranty - {filtered.length} vehicle{filtered.length === 1 ? "" : "s"} currently
-            in stock.
+            comprehensive in-house warranty - {availableCount} vehicle{availableCount === 1 ? "" : "s"} currently
+            available.
           </p>
         </div>
 

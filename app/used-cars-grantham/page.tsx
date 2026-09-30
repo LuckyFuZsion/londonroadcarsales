@@ -6,6 +6,7 @@ import { StockFilters } from "@/components/stock-filters"
 import { VehicleGrid } from "@/components/vehicle-grid"
 import { getPublicVehicles } from "@/lib/vehicles"
 import { business } from "@/lib/business"
+import { filterAndSortVehicles, type StockSearchParams } from "@/lib/stock-filter"
 
 export const metadata: Metadata = {
   title: `Used Cars for Sale in Grantham | ${business.name}`,
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 }
 
 interface PageProps {
-  searchParams: Promise<{ q?: string; make?: string; minPrice?: string; maxPrice?: string }>
+  searchParams: Promise<StockSearchParams>
 }
 
 export default async function UsedCarsPage({ searchParams }: PageProps) {
@@ -22,17 +23,8 @@ export default async function UsedCarsPage({ searchParams }: PageProps) {
   const cars = vehicles.filter((v) => v.vehicleType === "car")
   const makes = Array.from(new Set(cars.map((v) => v.make))).sort()
 
-  const filtered = cars.filter((vehicle) => {
-    if (params.make && params.make !== "all" && vehicle.make !== params.make) return false
-    if (params.minPrice && vehicle.price < Number(params.minPrice)) return false
-    if (params.maxPrice && vehicle.price > Number(params.maxPrice)) return false
-    if (params.q) {
-      const needle = params.q.toLowerCase()
-      const haystack = `${vehicle.make} ${vehicle.model} ${vehicle.variant} ${vehicle.bodyType}`.toLowerCase()
-      if (!haystack.includes(needle)) return false
-    }
-    return true
-  })
+  const filtered = filterAndSortVehicles(cars, params)
+  const availableCount = cars.filter((v) => v.status === "available").length
 
   return (
     <>
@@ -42,7 +34,7 @@ export default async function UsedCarsPage({ searchParams }: PageProps) {
           <h1 className="font-heading text-3xl font-bold text-foreground">Used cars in Grantham</h1>
           <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
             Every car we sell is supplied with 12 months MOT, a full service and our comprehensive in-house
-            warranty - {filtered.length} car{filtered.length === 1 ? "" : "s"} currently in stock.
+            warranty - {availableCount} car{availableCount === 1 ? "" : "s"} currently available.
           </p>
         </div>
 
