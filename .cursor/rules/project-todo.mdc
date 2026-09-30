@@ -1,0 +1,28 @@
+---
+description: Project work list and non-negotiable rules for London Road Car Sales
+alwaysApply: true
+---
+
+# Work list
+
+The full, ordered work list is in `TODO.md` at the project root. Work through it top to bottom
+(Phase A to F), tick items off as they are finished, and do not start a phase until the previous
+one builds cleanly. Read `TODO.md` at the start of a session.
+
+# Rules that apply to all work
+
+- Next.js here is a newer version with breaking changes. Read the relevant guide in `node_modules/next/dist/docs/` before writing Next.js code (see `AGENTS.md`).
+- Stock lives in Firebase Firestore (`vehicles` collection) and is accessed ONLY server-side via the Firebase Admin SDK. Never read or write Firestore from client code.
+- Every admin server action and admin API route must verify the admin session and the `ADMIN_EMAILS` allowlist before doing anything. An empty allowlist means deny.
+- The registration plate (`reg`) is admin-only. Public pages and components only ever receive `PublicVehicle`. Never put it in metadata, JSON-LD, URLs or client props.
+- Images go browser to Cloudinary via signed uploads from `/api/cloudinary/sign`. Never proxy image uploads through Next.js.
+- Never commit secrets. Do not create or edit `.env` files. If a new env variable is needed, add it to the "Env vars" list in `TODO.md` and tell Steve.
+- Anything prefixed `NEXT_PUBLIC_` is visible to the browser. Never put a secret behind that prefix.
+- Call `revalidatePath` after every admin change that affects public pages.
+- Prices are always shown in full with no hidden fees. Vans and commercials show VAT status.
+- British English throughout.
+- Business details come from `lib/business.ts` only. Do not hardcode phone, address or hours elsewhere.
+- Production must fail loudly, not fall back to mock data, if Firebase is not configured.
+- Keep `typescript.ignoreBuildErrors` off. `npx tsc --noEmit` and `npm run build` must both pass.
+- The footer credit "Website by WebFuZsion Web Design" linking to https://webfuzsion.co.uk must stay, followed (no `nofollow`).
+- Admin screens are used on a phone: design mobile first, large touch targets, no horizontal scroll.

@@ -1,0 +1,28 @@
+# Dependencies
+node_modules
+
+# Next.js / build output
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# Environment variables (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# Vercel
+.vercel/
+
+# v0 sandbox internal files
+__v0_runtime_loader.js
+__v0_devtools.tsx
+__v0_jsx-dev-runtime.ts
+.snowflake/
+.v0-trash/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+npm-debug.log*
