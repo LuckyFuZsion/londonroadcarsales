@@ -83,8 +83,13 @@ export function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
       return
     }
 
-    toast.success(vehicle ? "Vehicle updated" : "Vehicle added")
-    router.push("/admin")
+    if (vehicle) {
+      toast.success("Vehicle updated")
+      router.push("/admin")
+    } else {
+      toast.success("Vehicle added. Now add some photos.")
+      router.push(`/admin/vehicles/${result.id}`)
+    }
     router.refresh()
   }
 
@@ -206,7 +211,7 @@ export function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
         </div>
       </section>
 
-      <p className="text-sm text-muted-foreground">Photos can be added once the vehicle is saved.</p>
+      <p className="text-sm text-muted-foreground">{vehicle ? "" : "Photos can be added on the next screen, once the vehicle is saved."}</p>
 
       <div className="fixed inset-x-0 bottom-0 border-t border-border bg-card p-3">
         <div className="mx-auto flex max-w-5xl gap-3">

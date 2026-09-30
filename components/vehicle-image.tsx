@@ -1,5 +1,6 @@
 import Image from "next/image"
-import { isCloudinaryPublicId, cloudinaryCloudName } from "@/lib/cloudinary"
+import { CldImage } from "next-cloudinary"
+import { isCloudinaryPublicId } from "@/lib/cloudinary"
 import type { VehicleImage as VehicleImageType } from "@/lib/types"
 
 interface VehicleImageProps {
@@ -12,19 +13,40 @@ interface VehicleImageProps {
 }
 
 /**
- * Renders a vehicle photo. Uses Cloudinary's fetch URL format for real
- * Cloudinary public IDs, and falls back to a plain next/image for the local
- * /public paths used by the mock stock.
+ * Renders a vehicle photo. Real Cloudinary uploads go through next-cloudinary
+ * (resized and format-converted by Cloudinary's CDN); local /public paths, such
+ * as the sample stock, fall back to a plain next/image.
  */
 export function VehicleImage({ image, alt, sizes, priority, fill = true, className }: VehicleImageProps) {
-  const src = isCloudinaryPublicId(image.publicId)
-    ? `https://res.cloudinary.com/${cloudinaryCloudName()}/image/upload/f_auto,q_auto/${image.publicId}`
-    : image.publicId
+  if (isCloudinaryPublicId(image.publicId)) {
+    return fill ? (
+      <CldImage
+        src={image.publicId}
+        alt={alt}
+        fill
+        sizes={sizes ?? "(min-width: 1024px) 33vw, 100vw"}
+        className={className}
+        priority={priority}
+      />
+    ) : (
+      <CldImage
+        src={image.publicId}
+        alt={alt}
+        width={image.width}
+        height={image.height}
+        sizes={sizes}
+        className={className}
+        priority={priority}
+      />
+    )
+  }
+
+  const src = image.publicId || "/placeholder.svg"
 
   if (fill) {
     return (
       <Image
-        src={src || "/placeholder.svg"}
+        src={src}
         alt={alt}
         fill
         sizes={sizes ?? "(min-width: 1024px) 33vw, 100vw"}
@@ -36,7 +58,7 @@ export function VehicleImage({ image, alt, sizes, priority, fill = true, classNa
 
   return (
     <Image
-      src={src || "/placeholder.svg"}
+      src={src}
       alt={alt}
       width={image.width}
       height={image.height}

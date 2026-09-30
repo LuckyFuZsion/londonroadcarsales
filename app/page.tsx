@@ -11,7 +11,13 @@ import { CtaSection } from "@/components/cta-section"
 // the interval is a safety net.
 export const revalidate = 3600
 
-export default function HomePage() {
+type HomePageProps = {
+  searchParams: Promise<{ page?: string | string[] }>
+}
+
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const params = await searchParams
+
   return (
     <>
       <SiteHeader />
@@ -19,7 +25,7 @@ export default function HomePage() {
         <HomeHero />
         <UspStrip />
         <VehicleTypeLinks />
-        <FeaturedVehicles />
+        <FeaturedVehicles searchParams={params} />
         <CtaSection />
       </main>
       <SiteFooter />

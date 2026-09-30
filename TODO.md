@@ -28,10 +28,10 @@ no Resend, no Cloudinary SDK, no JSON-LD. `npm run build` passes only because ty
 - [x] B3. Shared helper `requireAdmin()` built on `getAdminSession()`. EVERY admin server action and API route calls it first (verify the token/session, check `ADMIN_EMAILS`).
 - [x] B4. Admin stock list (`/admin`): all vehicles incl. drafts, status badges, quick status change (draft / available / reserved / sold).
 - [x] B5. Admin add/edit vehicle form using `lib/validations/vehicle.ts`. Reg is admin-only. Server actions call `requireAdmin()`, then `revalidatePath` for `/`, `/stock`, `/stock/[slug]`, the three landing pages and the sitemap.
-- [ ] B6. `/api/cloudinary/sign`: admin-protected, signs an upload for folder `vehicles/{vehicleId}` with incoming transformation max 2000px width. Uploads go browser to Cloudinary directly, never through Next.js.
-- [ ] B7. Admin image manager: multi-upload (phone camera friendly), reorder, set cover, remove.
-- [ ] B8. (Vehicle delete action and button are done; still to do: delete the Cloudinary images for the vehicle. Must be finished before real photos are uploaded.) Delete vehicle: `requireAdmin()`, delete the Cloudinary images for `vehicles/{id}`, delete the doc, revalidate.
-- [ ] B9. Install `next-cloudinary` and switch `components/vehicle-image.tsx` to it (currently builds URLs by hand).
+- [x] B6. `/api/cloudinary/sign`: admin-protected, signs an upload for folder `vehicles/{vehicleId}` with incoming transformation max 2000px width. Uploads go browser to Cloudinary directly, never through Next.js.
+- [x] B7. Admin image manager: multi-upload (phone camera friendly), reorder, set cover, remove.
+- [x] B8. Delete vehicle: `requireAdmin()`, delete the Cloudinary images for `vehicles/{id}`, delete the doc, revalidate.
+- [x] B9. Install `next-cloudinary` and switch `components/vehicle-image.tsx` to it (currently builds URLs by hand).
 - [ ] B10. Enquiries: install `resend`; send from `enquiries@londonroadcarsales.uk`, reply-to the customer, to `BUSINESS_EMAIL`. Keep the Firestore copy. Add rate limiting and max lengths in `lib/validations/enquiry.ts`. Return an error if the email fails; never report success when nothing was sent or stored.
 - [ ] B11. DVLA reg lookup in the admin form (server-side call, `DVLA_API_KEY`); hide the button when the key is missing. Prefill make, year, fuel, colour, MOT expiry.
 

@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ChevronLeft } from "lucide-react"
 import { VehicleForm } from "@/components/admin/vehicle-form"
+import { ImageManager } from "@/components/admin/image-manager"
 import { DeleteVehicleButton } from "@/components/admin/delete-vehicle-button"
 import { getVehicleByIdAdmin } from "@/lib/vehicles"
 import { vehicleTitle } from "@/lib/format"
@@ -21,6 +22,9 @@ export default async function EditVehiclePage({ params }: { params: Promise<{ id
         Back to stock
       </Link>
       <h1 className="mb-5 mt-2 font-heading text-2xl font-bold text-foreground">{vehicleTitle(vehicle)}</h1>
+      <div className="mb-5">
+        <ImageManager vehicleId={vehicle.id} initialImages={vehicle.images} />
+      </div>
       <VehicleForm vehicle={vehicle} />
       <div className="mb-24 mt-2">
         <DeleteVehicleButton id={vehicle.id} title={vehicleTitle(vehicle)} />

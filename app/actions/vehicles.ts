@@ -3,8 +3,15 @@
 import { revalidatePath } from "next/cache"
 import { requireAdmin } from "@/lib/auth"
 import { createVehicle, deleteVehicle, getVehicleByIdAdmin, updateVehicle } from "@/lib/vehicles"
-import { vehicleFormSchema } from "@/lib/validations/vehicle"
-import type { VehicleStatus } from "@/lib/types"
+import { vehicleFormSchema, vehicleImageSchema } from "@/lib/validations/vehicle"
+import {
+  deleteCloudinaryImage,
+  deleteVehicleFolder,
+  isCloudinaryConfigured,
+  isValidVehicleId,
+  vehicleFolder,
+} from "@/lib/cloudinary-server"
+import type { VehicleImage, VehicleStatus } from "@/lib/types"
 
 export interface VehicleActionResult {
   ok: boolean
@@ -141,11 +148,88 @@ export async function removeVehicle(id: string): Promise<VehicleActionResult> {
   try {
     const existing = await getVehicleByIdAdmin(id)
     if (!existing) return { ok: false, error: "Vehicle not found." }
+    if (isCloudinaryConfigured() && isValidVehicleId(id)) await deleteVehicleFolder(id)
     await deleteVehicle(id)
     revalidateSite(existing.slug)
     return { ok: true }
   } catch (error) {
     console.error("[vehicles] Failed to delete vehicle:", error)
     return { ok: false, error: "Could not delete the vehicle. Please try again." }
+  }
+}
+
+/** Appends photos that the browser has just uploaded to this vehicle's Cloudinary folder. */
+export async function addVehicleImages(id: string, images: VehicleImage[]): Promise<VehicleActionResult> {
+  await requireAdmin()
+
+  const parsed = vehicleImageSchema.array().min(1).max(30).safeParse(images)
+  if (!parsed.success) return { ok: false, error: "Invalid image details." }
+
+  const prefix = `${vehicleFolder(id)}/`
+  if (!isValidVehicleId(id) || parsed.data.some((image) => !image.publicId.startsWith(prefix))) {
+    return { ok: false, error: "Image does not belong to this vehicle." }
+  }
+
+  try {
+    const existing = await getVehicleByIdAdmin(id)
+    if (!existing) return { ok: false, error: "Vehicle not found." }
+
+    const known = new Set(existing.images.map((image) => image.publicId))
+    const fresh = parsed.data.filter((image) => !known.has(image.publicId))
+    await updateVehicle(id, { images: [...existing.images, ...fresh] })
+    revalidateSite(existing.slug)
+    return { ok: true, id }
+  } catch (error) {
+    console.error("[vehicles] Failed to add images:", error)
+    return { ok: false, error: "Could not save the photos. Please try again." }
+  }
+}
+
+/** Removes one photo from the vehicle and, if it is a Cloudinary upload, from Cloudinary too. */
+export async function removeVehicleImage(id: string, publicId: string): Promise<VehicleActionResult> {
+  await requireAdmin()
+
+  try {
+    const existing = await getVehicleByIdAdmin(id)
+    if (!existing) return { ok: false, error: "Vehicle not found." }
+    if (!existing.images.some((image) => image.publicId === publicId)) {
+      return { ok: false, error: "Photo not found." }
+    }
+
+    if (isCloudinaryConfigured() && publicId.startsWith(`${vehicleFolder(id)}/`)) {
+      await deleteCloudinaryImage(publicId)
+    }
+
+    await updateVehicle(id, { images: existing.images.filter((image) => image.publicId !== publicId) })
+    revalidateSite(existing.slug)
+    return { ok: true, id }
+  } catch (error) {
+    console.error("[vehicles] Failed to remove image:", error)
+    return { ok: false, error: "Could not remove the photo. Please try again." }
+  }
+}
+
+/** Saves a new photo order. The first photo is the cover image. */
+export async function reorderVehicleImages(id: string, publicIds: string[]): Promise<VehicleActionResult> {
+  await requireAdmin()
+
+  try {
+    const existing = await getVehicleByIdAdmin(id)
+    if (!existing) return { ok: false, error: "Vehicle not found." }
+
+    const byId = new Map(existing.images.map((image) => [image.publicId, image]))
+    const ordered = publicIds
+      .map((publicId) => byId.get(publicId))
+      .filter((image): image is VehicleImage => Boolean(image))
+    if (ordered.length !== existing.images.length) {
+      return { ok: false, error: "Photo list is out of date. Reload and try again." }
+    }
+
+    await updateVehicle(id, { images: ordered })
+    revalidateSite(existing.slug)
+    return { ok: true, id }
+  } catch (error) {
+    console.error("[vehicles] Failed to reorder images:", error)
+    return { ok: false, error: "Could not save the photo order. Please try again." }
   }
 }
