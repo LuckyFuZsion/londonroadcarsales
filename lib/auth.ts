@@ -1,10 +1,11 @@
 import "server-only"
 import { cookies } from "next/headers"
+import { redirect } from "next/navigation"
 import { isFirebaseAdminConfigured, adminAuth } from "@/lib/firebase/admin"
 
 export const SESSION_COOKIE_NAME = "__session"
 
-function adminEmails(): string[] {
+export function adminEmails(): string[] {
   return (process.env.ADMIN_EMAILS ?? "")
     .split(",")
     .map((email) => email.trim().toLowerCase())
@@ -42,4 +43,27 @@ export async function getAdminSession(): Promise<AdminSession | null> {
   } catch {
     return null
   }
+}
+
+/** True if this email is on the ADMIN_EMAILS allowlist. An empty list denies everyone. */
+export function isAllowedAdminEmail(email: string | undefined | null): boolean {
+  if (!email) return false
+  return adminEmails().includes(email.toLowerCase())
+}
+
+/**
+ * Call first in EVERY admin server action and admin API route. Throws if the
+ * caller is not a signed-in, allowlisted admin.
+ */
+export async function requireAdmin(): Promise<AdminSession> {
+  const session = await getAdminSession()
+  if (!session) throw new Error("Unauthorised")
+  return session
+}
+
+/** For admin pages and layouts: redirects to the login page instead of throwing. */
+export async function requireAdminPage(): Promise<AdminSession> {
+  const session = await getAdminSession()
+  if (!session) redirect("/admin/login")
+  return session
 }

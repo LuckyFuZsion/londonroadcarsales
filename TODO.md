@@ -23,9 +23,9 @@ no Resend, no Cloudinary SDK, no JSON-LD. `npm run build` passes only because ty
 
 ## Phase B: build what is missing
 
-- [ ] B1. `firestore.rules`: deny all client read/write. Add `firebase.json` reference if needed. Deploy is a manual step for Steve.
-- [ ] B2. Admin auth: `/admin/login` (Firebase client sign-in), server action or route that exchanges the ID token for a `__session` cookie (`createSessionCookie`), logout, and a guard in `app/admin/layout.tsx`.
-- [ ] B3. Shared helper `requireAdmin()` built on `getAdminSession()`. EVERY admin server action and API route calls it first (verify the token/session, check `ADMIN_EMAILS`).
+- [x] B1. `firestore.rules`: deny all client read/write. Add `firebase.json` reference if needed. Deploy is a manual step for Steve.
+- [x] B2. Admin auth: `/admin/login` (Firebase client sign-in), server action or route that exchanges the ID token for a `__session` cookie (`createSessionCookie`), logout, and a guard in `app/admin/layout.tsx`.
+- [x] B3. Shared helper `requireAdmin()` built on `getAdminSession()`. EVERY admin server action and API route calls it first (verify the token/session, check `ADMIN_EMAILS`).
 - [ ] B4. Admin stock list (`/admin`): all vehicles incl. drafts, status badges, quick status change (draft / available / reserved / sold).
 - [ ] B5. Admin add/edit vehicle form using `lib/validations/vehicle.ts`. Reg is admin-only. Server actions call `requireAdmin()`, then `revalidatePath` for `/`, `/stock`, `/stock/[slug]`, the three landing pages and the sitemap.
 - [ ] B6. `/api/cloudinary/sign`: admin-protected, signs an upload for folder `vehicles/{vehicleId}` with incoming transformation max 2000px width. Uploads go browser to Cloudinary directly, never through Next.js.
