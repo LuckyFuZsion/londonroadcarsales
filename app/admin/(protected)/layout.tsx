@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { requireAdminPage } from "@/lib/auth"
 import { AdminHeader } from "@/components/admin/admin-header"
+import { AdminNav } from "@/components/admin/admin-nav"
 
 export const metadata: Metadata = {
   title: "Admin",
@@ -13,6 +14,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="min-h-dvh bg-background">
       <AdminHeader email={session.email} />
+      <AdminNav />
       <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6">{children}</main>
     </div>
   )
