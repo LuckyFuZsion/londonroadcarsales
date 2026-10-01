@@ -1,11 +1,17 @@
 import "server-only"
-import { cert, getApps, initializeApp, type App } from "firebase-admin/app"
+import { cert, getApps, initializeApp, type App, type ServiceAccount } from "firebase-admin/app"
 import { getAuth } from "firebase-admin/auth"
 import { getFirestore } from "firebase-admin/firestore"
 
+type AdminCredential = {
+  projectId: string
+  clientEmail: string
+  privateKey: string
+}
+
 /**
- * Vercel and .env files often wrap the PEM in quotes and/or store newlines as
- * the two-character sequence \n. Normalise both before handing to firebase-admin.
+ * Vercel often mangles PEM newlines in FIREBASE_PRIVATE_KEY. Prefer a single
+ * base64 service-account JSON instead (FIREBASE_SERVICE_ACCOUNT_BASE64).
  */
 function normalizePrivateKey(privateKey: string) {
   let key = privateKey.trim()
@@ -20,13 +26,35 @@ function normalizePrivateKey(privateKey: string) {
   return key.replace(/\\n/g, "\n")
 }
 
-/**
- * Firebase Admin is only initialised when all required server env vars are
- * present. Until then `isFirebaseAdminConfigured()` returns false and every
- * data-access helper in lib/vehicles.ts falls back to the local mock data,
- * so the site remains fully previewable before Firebase is connected.
- */
-function getRequiredEnv() {
+function fromServiceAccountBase64(): AdminCredential | null {
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64?.trim()
+  if (!raw) return null
+
+  try {
+    const json = Buffer.from(raw, "base64").toString("utf8")
+    const parsed = JSON.parse(json) as {
+      project_id?: string
+      client_email?: string
+      private_key?: string
+    }
+
+    if (!parsed.project_id || !parsed.client_email || !parsed.private_key) {
+      console.error("FIREBASE_SERVICE_ACCOUNT_BASE64 is missing project_id, client_email or private_key.")
+      return null
+    }
+
+    return {
+      projectId: parsed.project_id,
+      clientEmail: parsed.client_email,
+      privateKey: normalizePrivateKey(parsed.private_key),
+    }
+  } catch (error) {
+    console.error("Failed to decode FIREBASE_SERVICE_ACCOUNT_BASE64:", error)
+    return null
+  }
+}
+
+function fromSplitEnvVars(): AdminCredential | null {
   const projectId = process.env.FIREBASE_PROJECT_ID?.trim()
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL?.trim()
   const privateKey = process.env.FIREBASE_PRIVATE_KEY
@@ -34,6 +62,15 @@ function getRequiredEnv() {
   if (!projectId || !clientEmail || !privateKey) return null
 
   return { projectId, clientEmail, privateKey: normalizePrivateKey(privateKey) }
+}
+
+/**
+ * Firebase Admin is only initialised when credentials are present. Until then
+ * `isFirebaseAdminConfigured()` returns false and public reads fall back to
+ * mock data locally (or empty stock in production).
+ */
+function getRequiredEnv(): AdminCredential | null {
+  return fromServiceAccountBase64() ?? fromSplitEnvVars()
 }
 
 export function isFirebaseAdminConfigured() {
@@ -48,15 +85,13 @@ function isProductionRuntime() {
 }
 
 /**
- * Mock stock and dropped enquiries are for local development only. In
- * production a missing Firebase config is a deployment error, so fail loudly
- * rather than silently showing fake vehicles. `next build` is exempt so the
- * build can run without live credentials.
+ * Used by admin writes / enquiries. Public pages soft-fail instead so a
+ * missing credential does not white-screen the whole site.
  */
 export function assertFirebaseConfiguredInProduction() {
   if (isProductionRuntime() && !isFirebaseAdminConfigured()) {
     throw new Error(
-      "Firebase Admin is not configured in production. Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY.",
+      "Firebase Admin is not configured in production. Set FIREBASE_SERVICE_ACCOUNT_BASE64 (preferred) or FIREBASE_PROJECT_ID + FIREBASE_CLIENT_EMAIL + FIREBASE_PRIVATE_KEY.",
     )
   }
 }
@@ -67,7 +102,7 @@ function getAdminApp(): App {
   const env = getRequiredEnv()
   if (!env) {
     throw new Error(
-      "Firebase Admin is not configured. Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY.",
+      "Firebase Admin is not configured. Set FIREBASE_SERVICE_ACCOUNT_BASE64 (preferred) or FIREBASE_PROJECT_ID + FIREBASE_CLIENT_EMAIL + FIREBASE_PRIVATE_KEY.",
     )
   }
 
@@ -79,14 +114,20 @@ function getAdminApp(): App {
     return app
   }
 
+  const serviceAccount: ServiceAccount = {
+    projectId: env.projectId,
+    clientEmail: env.clientEmail,
+    privateKey: env.privateKey,
+  }
+
   try {
     app = initializeApp({
-      credential: cert(env),
+      credential: cert(serviceAccount),
     })
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown credential error"
     throw new Error(
-      `Firebase Admin credential failed (${message}). On Vercel, set FIREBASE_PRIVATE_KEY as one line with \\n for newlines, without wrapping quotes.`,
+      `Firebase Admin credential failed (${message}). Prefer FIREBASE_SERVICE_ACCOUNT_BASE64 (base64 of the service account JSON) on Vercel.`,
     )
   }
 
