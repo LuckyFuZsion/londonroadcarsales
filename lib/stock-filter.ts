@@ -40,6 +40,9 @@ export function filterAndSortVehicles(vehicles: PublicVehicle[], params: StockSe
 
   return filtered
     .map((vehicle, index) => ({ vehicle, index }))
-    .sort((a, b) => STATUS_ORDER[a.vehicle.status] - STATUS_ORDER[b.vehicle.status] || a.index - b.index)
+    .sort(
+      (a, b) =>
+        (STATUS_ORDER[a.vehicle.status] ?? 99) - (STATUS_ORDER[b.vehicle.status] ?? 99) || a.index - b.index,
+    )
     .map(({ vehicle }) => vehicle)
 }

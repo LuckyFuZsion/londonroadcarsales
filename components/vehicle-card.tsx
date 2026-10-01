@@ -22,7 +22,9 @@ export function VehicleCard({ vehicle }: { vehicle: PublicVehicle }) {
             alt={title}
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
-        ) : null}
+        ) : (
+          <div className="flex size-full items-center justify-center text-sm text-muted-foreground">No photo</div>
+        )}
         {isSold ? <div className="absolute inset-0 bg-foreground/40" aria-hidden="true" /> : null}
         {vehicle.status === "available" ? (
           <VehicleStatusBadge status={vehicle.status} className="absolute left-3 top-3" />

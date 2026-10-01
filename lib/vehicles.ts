@@ -2,7 +2,7 @@ import "server-only"
 import { isFirebaseAdminConfigured, adminDb, assertFirebaseConfiguredInProduction } from "@/lib/firebase/admin"
 import { mockVehicles } from "@/lib/mock-data"
 import type { Vehicle, PublicVehicle } from "@/lib/types"
-import { toPublicVehicle } from "@/lib/types"
+import { normalizeVehicle, toPublicVehicle } from "@/lib/types"
 
 const COLLECTION = "vehicles"
 
@@ -14,13 +14,17 @@ function sortByNewest(vehicles: Vehicle[]) {
   return [...vehicles].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 }
 
+function fromFirestoreDoc(id: string, data: Record<string, unknown> | undefined): Vehicle {
+  return normalizeVehicle({ id, ...(data ?? {}) })
+}
+
 async function readAllVehicles(): Promise<Vehicle[]> {
   if (!isFirebaseAdminConfigured()) {
     // Public pages must not white-screen if env vars are missing on Vercel.
     // Admin writes still call assertFirebaseConfiguredInProduction().
     if (process.env.NODE_ENV === "production" && process.env.NEXT_PHASE !== "phase-production-build") {
       console.error(
-        "Firebase Admin is not configured in production. Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY.",
+        "Firebase Admin is not configured in production. Set FIREBASE_SERVICE_ACCOUNT_BASE64 (or FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY).",
       )
       return []
     }
@@ -29,7 +33,7 @@ async function readAllVehicles(): Promise<Vehicle[]> {
 
   try {
     const snapshot = await adminDb().collection(COLLECTION).get()
-    const vehicles = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Vehicle)
+    const vehicles = snapshot.docs.map((doc) => fromFirestoreDoc(doc.id, doc.data() as Record<string, unknown>))
     return sortByNewest(vehicles)
   } catch (error) {
     console.error("Failed to read vehicles from Firestore:", error)
@@ -69,7 +73,7 @@ export async function getVehicleByIdAdmin(id: string): Promise<Vehicle | null> {
 
   const doc = await adminDb().collection(COLLECTION).doc(id).get()
   if (!doc.exists) return null
-  return { id: doc.id, ...doc.data() } as Vehicle
+  return fromFirestoreDoc(doc.id, doc.data() as Record<string, unknown>)
 }
 
 function slugify(input: string) {
