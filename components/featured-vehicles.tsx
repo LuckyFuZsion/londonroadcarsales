@@ -11,7 +11,14 @@ type FeaturedVehiclesProps = {
 }
 
 export async function FeaturedVehicles({ searchParams }: FeaturedVehiclesProps = {}) {
-  const vehicles = await getAvailableVehicles()
+  let vehicles: Awaited<ReturnType<typeof getAvailableVehicles>> = []
+  try {
+    vehicles = await getAvailableVehicles()
+  } catch (error) {
+    console.error("Featured vehicles failed to load:", error)
+    return null
+  }
+
   if (vehicles.length === 0) return null
 
   const { items, currentPage, totalPages, total } = paginate(

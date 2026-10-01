@@ -15,14 +15,28 @@ function sortByNewest(vehicles: Vehicle[]) {
 }
 
 async function readAllVehicles(): Promise<Vehicle[]> {
-  assertFirebaseConfiguredInProduction()
   if (!isFirebaseAdminConfigured()) {
+    // Public pages must not white-screen if env vars are missing on Vercel.
+    // Admin writes still call assertFirebaseConfiguredInProduction().
+    if (process.env.NODE_ENV === "production" && process.env.NEXT_PHASE !== "phase-production-build") {
+      console.error(
+        "Firebase Admin is not configured in production. Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY.",
+      )
+      return []
+    }
     return sortByNewest(mockVehicles)
   }
 
-  const snapshot = await adminDb().collection(COLLECTION).get()
-  const vehicles = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Vehicle)
-  return sortByNewest(vehicles)
+  try {
+    const snapshot = await adminDb().collection(COLLECTION).get()
+    const vehicles = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Vehicle)
+    return sortByNewest(vehicles)
+  } catch (error) {
+    console.error("Failed to read vehicles from Firestore:", error)
+    // Keep the public site up if credentials/network fail at runtime.
+    if (process.env.NODE_ENV === "production") return []
+    throw error
+  }
 }
 
 /** All non-draft vehicles, with the registration plate stripped out. */
