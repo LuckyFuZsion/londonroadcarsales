@@ -15,6 +15,8 @@ next-env.d.ts
 # Firebase service account keys (never commit)
 *firebase-adminsdk*.json
 .vercel-firebase-b64.txt
+scripts/_mock-temp.cjs
+scripts/_seed-mock-firestore.mjs
 
 
 # Vercel

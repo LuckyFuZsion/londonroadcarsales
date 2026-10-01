@@ -1,0 +1,74 @@
+{
+  "mock-1": [
+    {
+      "publicId": "vehicles/mock-1/1",
+      "width": 1408,
+      "height": 768
+    },
+    {
+      "publicId": "vehicles/mock-1/2",
+      "width": 1408,
+      "height": 768
+    }
+  ],
+  "mock-2": [
+    {
+      "publicId": "vehicles/mock-2/1",
+      "width": 1408,
+      "height": 768
+    },
+    {
+      "publicId": "vehicles/mock-2/2",
+      "width": 1408,
+      "height": 768
+    }
+  ],
+  "mock-3": [
+    {
+      "publicId": "vehicles/mock-3/1",
+      "width": 1408,
+      "height": 768
+    },
+    {
+      "publicId": "vehicles/mock-3/2",
+      "width": 1408,
+      "height": 768
+    }
+  ],
+  "mock-4": [
+    {
+      "publicId": "vehicles/mock-4/1",
+      "width": 1408,
+      "height": 768
+    },
+    {
+      "publicId": "vehicles/mock-4/2",
+      "width": 1408,
+      "height": 768
+    }
+  ],
+  "mock-5": [
+    {
+      "publicId": "vehicles/mock-5/1",
+      "width": 1408,
+      "height": 768
+    },
+    {
+      "publicId": "vehicles/mock-5/2",
+      "width": 1408,
+      "height": 768
+    }
+  ],
+  "mock-6": [
+    {
+      "publicId": "vehicles/mock-6/1",
+      "width": 1408,
+      "height": 768
+    },
+    {
+      "publicId": "vehicles/mock-6/2",
+      "width": 1408,
+      "height": 768
+    }
+  ]
+}

@@ -1,11 +1,8 @@
 import type { Vehicle } from "@/lib/types"
 
 /**
- * Sample stock used only when Firebase env vars are absent, so the site can
- * be previewed and designed before Firebase is connected. Image `publicId`
- * values below are local paths (served from /public) rather than real
- * Cloudinary public IDs - <VehicleImage> falls back to a normal <Image> for
- * any publicId that isn't a configured Cloudinary asset.
+ * Sample stock used when Firebase env vars are absent. Image publicIds are
+ * Cloudinary assets under vehicles/{mockId}/.
  */
 export const mockVehicles: Vehicle[] = [
   {
@@ -42,8 +39,8 @@ export const mockVehicles: Vehicle[] = [
       "Full service history",
     ],
     images: [
-      { publicId: "/vehicles/transit-custom/1.png", width: 1600, height: 1067 },
-      { publicId: "/vehicles/transit-custom/2.png", width: 1600, height: 1067 },
+      { publicId: "vehicles/mock-1/1", width: 1408, height: 768 },
+      { publicId: "vehicles/mock-1/2", width: 1408, height: 768 },
     ],
     createdAt: "2025-08-01T09:00:00.000Z",
     updatedAt: "2025-09-10T09:00:00.000Z",
@@ -82,8 +79,8 @@ export const mockVehicles: Vehicle[] = [
       "Electric windows all round",
     ],
     images: [
-      { publicId: "/vehicles/golf/1.png", width: 1600, height: 1067 },
-      { publicId: "/vehicles/golf/2.png", width: 1600, height: 1067 },
+      { publicId: "vehicles/mock-2/1", width: 1408, height: 768 },
+      { publicId: "vehicles/mock-2/2", width: 1408, height: 768 },
     ],
     createdAt: "2025-08-05T09:00:00.000Z",
     updatedAt: "2025-09-12T09:00:00.000Z",
@@ -115,8 +112,8 @@ export const mockVehicles: Vehicle[] = [
       "A one-owner Sprinter Luton with tail lift, ideal for removals or heavy-goods delivery work. Recently serviced with a fresh MOT. Supplied with our comprehensive in-house warranty for extra peace of mind.",
     features: ["Tail lift", "Luton body", "Ply-lined load area", "Tow bar", "Bluetooth"],
     images: [
-      { publicId: "/vehicles/sprinter/1.png", width: 1600, height: 1067 },
-      { publicId: "/vehicles/sprinter/2.png", width: 1600, height: 1067 },
+      { publicId: "vehicles/mock-3/1", width: 1408, height: 768 },
+      { publicId: "vehicles/mock-3/2", width: 1408, height: 768 },
     ],
     createdAt: "2025-07-20T09:00:00.000Z",
     updatedAt: "2025-09-18T09:00:00.000Z",
@@ -148,8 +145,8 @@ export const mockVehicles: Vehicle[] = [
       "A low-mileage, one-owner Corsa SE in eye-catching red. Cheap to run and insure, making it a perfect first car. Comes complete with 12 months MOT, a full service and our comprehensive in-house warranty.",
     features: ["Air conditioning", "Bluetooth", "DAB radio", "Electric windows", "Low insurance group"],
     images: [
-      { publicId: "/vehicles/corsa/1.png", width: 1600, height: 1067 },
-      { publicId: "/vehicles/corsa/2.png", width: 1600, height: 1067 },
+      { publicId: "vehicles/mock-4/1", width: 1408, height: 768 },
+      { publicId: "vehicles/mock-4/2", width: 1408, height: 768 },
     ],
     createdAt: "2025-08-25T09:00:00.000Z",
     updatedAt: "2025-09-20T09:00:00.000Z",
@@ -188,8 +185,8 @@ export const mockVehicles: Vehicle[] = [
       "Tow bar",
     ],
     images: [
-      { publicId: "/vehicles/ranger/1.png", width: 1600, height: 1067 },
-      { publicId: "/vehicles/ranger/2.png", width: 1600, height: 1067 },
+      { publicId: "vehicles/mock-5/1", width: 1408, height: 768 },
+      { publicId: "vehicles/mock-5/2", width: 1408, height: 768 },
     ],
     createdAt: "2025-08-12T09:00:00.000Z",
     updatedAt: "2025-09-22T09:00:00.000Z",
@@ -221,8 +218,8 @@ export const mockVehicles: Vehicle[] = [
       "A spacious, well-equipped Qashqai Acenta in blue, popular for its comfort and economy. Full service history and two owners from new.",
     features: ["Cruise control", "Bluetooth", "Rear parking sensors", "Air conditioning", "Alloy wheels"],
     images: [
-      { publicId: "/vehicles/qashqai/1.png", width: 1600, height: 1067 },
-      { publicId: "/vehicles/qashqai/2.png", width: 1600, height: 1067 },
+      { publicId: "vehicles/mock-6/1", width: 1408, height: 768 },
+      { publicId: "vehicles/mock-6/2", width: 1408, height: 768 },
     ],
     createdAt: "2025-06-01T09:00:00.000Z",
     updatedAt: "2025-09-15T09:00:00.000Z",
