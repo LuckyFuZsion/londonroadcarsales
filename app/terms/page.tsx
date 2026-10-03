@@ -3,10 +3,12 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { ContactActions } from "@/components/contact-actions"
 import { business } from "@/lib/business"
+import { canonicalMetadata } from "@/lib/seo"
 
 export const metadata: Metadata = {
-  title: `Terms & Conditions | ${business.name}`,
+  title: "Terms and conditions",
   description: `Terms and conditions for using the ${business.name} website and purchasing vehicles from us.`,
+  ...canonicalMetadata("/terms"),
 }
 
 export default function TermsPage() {

@@ -7,10 +7,12 @@ import { VehicleGrid } from "@/components/vehicle-grid"
 import { getPublicVehicles } from "@/lib/vehicles"
 import { business } from "@/lib/business"
 import { filterAndSortVehicles, type StockSearchParams } from "@/lib/stock-filter"
+import { canonicalMetadata } from "@/lib/seo"
 
 export const metadata: Metadata = {
-  title: `All Stock | ${business.name}`,
+  title: "All stock",
   description: `Browse every used car, van and commercial vehicle currently for sale at ${business.name} in ${business.address.town}.`,
+  ...canonicalMetadata("/stock"),
 }
 
 interface StockPageProps {

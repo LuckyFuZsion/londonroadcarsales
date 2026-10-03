@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next"
 import { business } from "@/lib/business"
 import { getPublicVehicles } from "@/lib/vehicles"
+import { isSoldPastIndexWindow } from "@/lib/seo"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const vehicles = await getPublicVehicles()
@@ -22,10 +23,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(),
   }))
 
-  const vehicleRoutes = vehicles.map((vehicle) => ({
-    url: `${business.siteUrl}/stock/${vehicle.slug}`,
-    lastModified: new Date(vehicle.updatedAt),
-  }))
+  const vehicleRoutes = vehicles
+    .filter((vehicle) => !isSoldPastIndexWindow(vehicle))
+    .map((vehicle) => ({
+      url: `${business.siteUrl}/stock/${vehicle.slug}`,
+      lastModified: new Date(vehicle.updatedAt),
+    }))
 
   return [...staticRoutes, ...vehicleRoutes]
 }

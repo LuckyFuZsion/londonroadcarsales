@@ -6,6 +6,7 @@ import { ImageManager } from "@/components/admin/image-manager"
 import { DeleteVehicleButton } from "@/components/admin/delete-vehicle-button"
 import { getVehicleByIdAdmin } from "@/lib/vehicles"
 import { vehicleTitle } from "@/lib/format"
+import { isDvlaConfigured } from "@/lib/dvla"
 
 export const dynamic = "force-dynamic"
 
@@ -25,7 +26,7 @@ export default async function EditVehiclePage({ params }: { params: Promise<{ id
       <div className="mb-5">
         <ImageManager vehicleId={vehicle.id} initialImages={vehicle.images} />
       </div>
-      <VehicleForm vehicle={vehicle} />
+      <VehicleForm vehicle={vehicle} dvlaEnabled={isDvlaConfigured()} />
       <div className="mb-24 mt-2">
         <DeleteVehicleButton id={vehicle.id} title={vehicleTitle(vehicle)} />
       </div>

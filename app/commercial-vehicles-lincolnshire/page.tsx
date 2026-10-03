@@ -7,10 +7,12 @@ import { VehicleGrid } from "@/components/vehicle-grid"
 import { getPublicVehicles } from "@/lib/vehicles"
 import { business } from "@/lib/business"
 import { filterAndSortVehicles, type StockSearchParams } from "@/lib/stock-filter"
+import { canonicalMetadata } from "@/lib/seo"
 
 export const metadata: Metadata = {
-  title: `Commercial Vehicles for Sale in Lincolnshire | ${business.name}`,
+  title: "Commercial vehicles for sale in Lincolnshire",
   description: `Pickups, Lutons and commercial vehicles for sale across Lincolnshire. Every vehicle comes with 12 months MOT, a full service and our comprehensive in-house warranty.`,
+  ...canonicalMetadata("/commercial-vehicles-lincolnshire"),
 }
 
 interface PageProps {

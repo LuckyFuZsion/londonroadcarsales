@@ -22,7 +22,7 @@ export function HomeHero() {
       <div className="relative mx-auto flex max-w-6xl flex-col gap-8 px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
         <div className="inline-flex items-center gap-2 self-start rounded-full bg-primary-foreground/10 px-3 py-1.5 text-xs font-medium text-primary-foreground">
           <ShieldCheck className="size-3.5" aria-hidden="true" />
-          12 months MOT &middot; Full service &middot; In-house warranty
+          12 months MOT &middot; Full service &middot; In-house warranty &middot; Independent finance
         </div>
 
         <div className="max-w-2xl">

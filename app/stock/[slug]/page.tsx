@@ -21,9 +21,17 @@ import { VehicleGallery } from "@/components/vehicle-gallery"
 import { VehicleStatusBadge } from "@/components/vehicle-status-badge"
 import { EnquiryForm } from "@/components/enquiry-form"
 import { VehicleGrid } from "@/components/vehicle-grid"
+import { JsonLd } from "@/components/json-ld"
 import { getPublicVehicleBySlug, getPublicVehicles } from "@/lib/vehicles"
 import { formatMileage, formatMotExpiry, formatPrice, vehicleTitle } from "@/lib/format"
 import { business } from "@/lib/business"
+import {
+  absoluteImageUrl,
+  absoluteUrl,
+  canonicalMetadata,
+  isSoldPastIndexWindow,
+  vehicleJsonLd,
+} from "@/lib/seo"
 
 interface VehiclePageProps {
   params: Promise<{ slug: string }>
@@ -35,13 +43,32 @@ export async function generateMetadata({ params }: VehiclePageProps): Promise<Me
   if (!vehicle) return {}
 
   const title = vehicleTitle(vehicle)
+  const description =
+    vehicle.description?.trim() ||
+    `${title} for sale at ${business.name} in ${business.address.town}. ${formatPrice(vehicle.price, vehicle.vatStatus)}.`
+  const image = absoluteImageUrl(vehicle.images[0]?.publicId)
+  const path = `/stock/${vehicle.slug}`
+  const noindex = isSoldPastIndexWindow(vehicle)
+
   return {
-    title: `${title} | ${business.name}`,
-    description: vehicle.description,
+    title,
+    description,
+    ...canonicalMetadata(path),
+    robots: noindex ? { index: false, follow: true } : undefined,
     openGraph: {
       title,
-      description: vehicle.description,
-      images: vehicle.images[0] ? [{ url: vehicle.images[0].publicId }] : undefined,
+      description,
+      url: absoluteUrl(path),
+      siteName: business.name,
+      type: "website",
+      locale: "en_GB",
+      images: [{ url: image, alt: title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
     },
   }
 }
@@ -73,6 +100,7 @@ export default async function VehiclePage({ params }: VehiclePageProps) {
 
   return (
     <>
+      <JsonLd data={vehicleJsonLd(vehicle)} />
       <SiteHeader />
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <nav aria-label="Breadcrumb" className="mb-5 flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -143,6 +171,9 @@ export default async function VehiclePage({ params }: VehiclePageProps) {
               </div>
 
               <p className="mt-4 text-3xl font-bold text-primary">{formatPrice(vehicle.price, vehicle.vatStatus)}</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Independent finance available through a separate facility, subject to status.
+              </p>
 
               {isSold ? (
                 <p className="mt-4 rounded-md bg-muted p-3 text-sm text-muted-foreground">

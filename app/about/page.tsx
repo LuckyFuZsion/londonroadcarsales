@@ -5,10 +5,12 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { ContactActions } from "@/components/contact-actions"
 import { business, formattedAddress } from "@/lib/business"
+import { canonicalMetadata } from "@/lib/seo"
 
 export const metadata: Metadata = {
-  title: `About Us | ${business.name}`,
+  title: "About us",
   description: `${business.name} is a family-run dealership on London Road, Grantham, selling quality used cars, vans and commercial vehicles across Lincolnshire.`,
+  ...canonicalMetadata("/about"),
 }
 
 export default function AboutPage() {
@@ -29,7 +31,8 @@ export default function AboutPage() {
             <p className="mx-auto mt-3 max-w-2xl text-pretty text-sm leading-relaxed text-muted-foreground sm:text-base">
               {business.name} is a family-run dealership based on London Road in Grantham, Lincolnshire. We sell
               honestly presented used cars, vans and commercial vehicles at fair prices - every one supplied with
-              12 months MOT, a full service and our comprehensive in-house warranty.
+              12 months MOT, a full service and our comprehensive in-house warranty. Independent finance can be
+              arranged through a separate facility, subject to status.
             </p>
           </div>
         </section>

@@ -2,13 +2,14 @@
 
 import { useState, type FormEvent, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
-import { Loader2 } from "lucide-react"
+import { Loader2, Search } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { saveVehicle, type VehicleFormInput } from "@/app/actions/vehicles"
+import { lookupVehicleByReg } from "@/app/actions/dvla"
 import { BODY_TYPES, FUEL_TYPES, TRANSMISSIONS, type Vehicle } from "@/lib/types"
 
 const selectClass = "mt-1.5 h-11 w-full rounded-md border border-input bg-background px-3 text-sm"
@@ -57,10 +58,11 @@ function initialValues(vehicle?: Vehicle): VehicleFormInput {
   }
 }
 
-export function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
+export function VehicleForm({ vehicle, dvlaEnabled = false }: { vehicle?: Vehicle; dvlaEnabled?: boolean }) {
   const router = useRouter()
   const [values, setValues] = useState<VehicleFormInput>(() => initialValues(vehicle))
   const [submitting, setSubmitting] = useState(false)
+  const [lookingUp, setLookingUp] = useState(false)
   const [error, setError] = useState("")
 
   function set<K extends keyof VehicleFormInput>(key: K) {
@@ -68,6 +70,33 @@ export function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
   }
 
   const needsVat = values.vehicleType !== "car"
+
+  async function handleDvlaLookup() {
+    if (!values.reg.trim()) {
+      toast.error("Enter a registration first")
+      return
+    }
+
+    setLookingUp(true)
+    const result = await lookupVehicleByReg(values.reg)
+    setLookingUp(false)
+
+    if (!result.ok) {
+      toast.error(result.error)
+      return
+    }
+
+    setValues((prev) => ({
+      ...prev,
+      make: result.data.make || prev.make,
+      year: result.data.year || prev.year,
+      fuel: result.data.fuel || prev.fuel,
+      colour: result.data.colour || prev.colour,
+      motExpiry: result.data.motExpiry || prev.motExpiry,
+      engineSize: result.data.engineSize || prev.engineSize,
+    }))
+    toast.success("Details filled from DVLA")
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -117,9 +146,34 @@ export function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
             <option value="commercial">Commercial vehicle</option>
           </select>
         </Field>
-        <Field label="Registration (never shown publicly)" htmlFor="reg">
-          <Input id="reg" value={values.reg} onChange={set("reg")} autoCapitalize="characters" className="mt-1.5 h-11 uppercase" />
-        </Field>
+        <div className="sm:col-span-2">
+          <Label htmlFor="reg">Registration (never shown publicly)</Label>
+          <div className="mt-1.5 flex flex-col gap-2 sm:flex-row">
+            <Input
+              id="reg"
+              value={values.reg}
+              onChange={set("reg")}
+              autoCapitalize="characters"
+              className="h-11 uppercase sm:flex-1"
+            />
+            {dvlaEnabled ? (
+              <Button
+                type="button"
+                variant="outline"
+                className="h-11 shrink-0"
+                onClick={handleDvlaLookup}
+                disabled={lookingUp || submitting}
+              >
+                {lookingUp ? (
+                  <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                ) : (
+                  <Search className="size-4" aria-hidden="true" />
+                )}
+                Lookup DVLA
+              </Button>
+            ) : null}
+          </div>
+        </div>
         <Field label="Price (£)" htmlFor="price">
           <Input id="price" type="number" inputMode="numeric" min={0} value={values.price} onChange={set("price")} className="mt-1.5 h-11" />
         </Field>

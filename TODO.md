@@ -32,18 +32,18 @@ no Resend, no Cloudinary SDK, no JSON-LD. `npm run build` passes only because ty
 - [x] B7. Admin image manager: multi-upload (phone camera friendly), reorder, set cover, remove.
 - [x] B8. Delete vehicle: `requireAdmin()`, delete the Cloudinary images for `vehicles/{id}`, delete the doc, revalidate.
 - [x] B9. Install `next-cloudinary` and switch `components/vehicle-image.tsx` to it (currently builds URLs by hand).
-- [ ] B10. Enquiries: install `resend`; send from `enquiries@londonroadcarsales.uk`, reply-to the customer, to `BUSINESS_EMAIL`. Keep the Firestore copy. Add rate limiting and max lengths in `lib/validations/enquiry.ts`. Return an error if the email fails; never report success when nothing was sent or stored.
-- [ ] B11. DVLA reg lookup in the admin form (server-side call, `DVLA_API_KEY`); hide the button when the key is missing. Prefill make, year, fuel, colour, MOT expiry.
+- [x] B10. Enquiries: install `resend`; send from `enquiries@londonroadcarsales.uk`, reply-to the customer, to `BUSINESS_EMAIL`. Keep the Firestore copy. Add rate limiting and max lengths in `lib/validations/enquiry.ts`. Return an error if the email fails; never report success when nothing was sent or stored.
+- [x] B11. DVLA reg lookup in the admin form (server-side call, `DVLA_API_KEY`); hide the button when the key is missing. Prefill make, year, fuel, colour, MOT expiry.
 
 ## Phase C: SEO and schema
 
-- [ ] C1. AutoDealer JSON-LD site-wide (layout) using `lib/business.ts`.
-- [ ] C2. Car/Vehicle + Offer JSON-LD on `/stock/[slug]` (price, currency GBP, availability from status, mileage, fuel, etc.). Never include the reg.
-- [ ] C3. `alternates.canonical` on every page (non-www, built from `business.siteUrl`). Confirm the www to non-www redirect in Vercel domain settings.
-- [ ] C4. Sold vehicles: `robots: { index: false }` once `soldAt` is more than 30 days ago. Consider dropping them from the sitemap at the same point.
-- [ ] C5. Vehicle page Open Graph: absolute image URL (Cloudinary or site URL + path), add twitter card.
-- [ ] C6. `robots.ts`: disallow `/admin` and `/api`. Add `robots: noindex` on admin pages.
-- [ ] C7. Review metadata on the three landing pages and all other pages (title, description, British English).
+- [x] C1. AutoDealer JSON-LD site-wide (layout) using `lib/business.ts`.
+- [x] C2. Car/Vehicle + Offer JSON-LD on `/stock/[slug]` (price, currency GBP, availability from status, mileage, fuel, etc.). Never include the reg.
+- [x] C3. `alternates.canonical` on every page (non-www, built from `business.siteUrl`). Confirm the www to non-www redirect in Vercel domain settings.
+- [x] C4. Sold vehicles: `robots: { index: false }` once `soldAt` is more than 30 days ago. Consider dropping them from the sitemap at the same point.
+- [x] C5. Vehicle page Open Graph: absolute image URL (Cloudinary or site URL + path), add twitter card.
+- [x] C6. `robots.ts`: disallow `/admin` and `/api`. Add `robots: noindex` on admin pages.
+- [x] C7. Review metadata on the three landing pages and all other pages (title, description, British English).
 
 ## Phase D: admin usability on a phone
 

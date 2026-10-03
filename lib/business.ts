@@ -27,16 +27,14 @@ export const business = {
     longitude: -0.6396,
   },
 
-  // TODO: replace with the dealership's real landline / mobile number.
   phone: {
-    display: "01476 000 000",
-    href: "tel:+441476000000",
+    display: "07395 827975",
+    href: "tel:+447395827975",
   },
 
-  // TODO: confirm WhatsApp business number (may be the same as the phone above).
   whatsapp: {
-    number: "441476000000",
-    href: "https://wa.me/441476000000",
+    number: "447395827975",
+    href: "https://wa.me/447395827975",
   },
 
   email: process.env.BUSINESS_EMAIL ?? "tywebster@hotmail.co.uk",
@@ -55,6 +53,7 @@ export const business = {
     "12 months MOT with every vehicle",
     "Full service with every vehicle",
     "Comprehensive in-house warranty",
+    "Independent finance available",
   ],
 
   // TODO: confirm registration details with the client (Ltd company or sole trader).

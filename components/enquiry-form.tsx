@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, type FormEvent } from "react"
+import { useState, useRef, type FormEvent } from "react"
 import { Loader2, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -17,6 +17,7 @@ interface EnquiryFormProps {
 export function EnquiryForm({ vehicleSlug, vehicleTitle, className }: EnquiryFormProps) {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle")
   const [error, setError] = useState("")
+  const startedAtRef = useRef(String(Date.now()))
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -33,11 +34,14 @@ export function EnquiryForm({ vehicleSlug, vehicleTitle, className }: EnquiryFor
       vehicleSlug: vehicleSlug ?? "",
       vehicleTitle: vehicleTitle ?? "",
       company: String(form.get("company") ?? ""),
+      websiteUrl: String(form.get("website_url") ?? ""),
+      formStartedAt: String(form.get("form_started_at") ?? startedAtRef.current),
     })
 
     if (result.ok) {
       setStatus("success")
       event.currentTarget.reset()
+      startedAtRef.current = String(Date.now())
     } else {
       setStatus("error")
       setError(result.error ?? "Something went wrong. Please try again.")
@@ -61,12 +65,21 @@ export function EnquiryForm({ vehicleSlug, vehicleTitle, className }: EnquiryFor
   }
 
   return (
-    <form onSubmit={handleSubmit} className={className} noValidate>
-      {/* Honeypot - hidden from real visitors, catches simple bots */}
-      <div className="hidden" aria-hidden="true">
+    <form onSubmit={handleSubmit} className={`relative ${className ?? ""}`} noValidate>
+      {/*
+        Honeypots: visually removed (not display:none, which bots often skip).
+        Keep empty - server rejects filled values and instant submissions.
+      */}
+      <div
+        className="pointer-events-none absolute -left-[10000px] top-auto h-px w-px overflow-hidden opacity-0"
+        aria-hidden="true"
+      >
         <label htmlFor="company">Company</label>
         <input id="company" name="company" tabIndex={-1} autoComplete="off" />
+        <label htmlFor="website_url">Website</label>
+        <input id="website_url" name="website_url" tabIndex={-1} autoComplete="off" />
       </div>
+      <input type="hidden" name="form_started_at" value={startedAtRef.current} readOnly />
 
       {vehicleTitle ? (
         <p className="mb-4 text-sm text-muted-foreground">
@@ -104,7 +117,7 @@ export function EnquiryForm({ vehicleSlug, vehicleTitle, className }: EnquiryFor
 
       {error ? <p className="mt-3 text-sm text-destructive">{error}</p> : null}
 
-      <Button type="submit" disabled={status === "submitting"} className="mt-5 w-full sm:w-auto">
+      <Button type="submit" disabled={status === "submitting"} className="mt-5 h-11 w-full sm:w-auto">
         {status === "submitting" ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
         Send enquiry
       </Button>

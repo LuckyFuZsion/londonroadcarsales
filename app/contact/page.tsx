@@ -5,10 +5,12 @@ import { SiteFooter } from "@/components/site-footer"
 import { ContactActions } from "@/components/contact-actions"
 import { EnquiryForm } from "@/components/enquiry-form"
 import { business, formattedAddress, hoursSummary } from "@/lib/business"
+import { canonicalMetadata } from "@/lib/seo"
 
 export const metadata: Metadata = {
-  title: `Contact Us | ${business.name}`,
+  title: "Contact us",
   description: `Get in touch with ${business.name} in Grantham - call, WhatsApp or send an enquiry about our used cars, vans and commercial vehicles.`,
+  ...canonicalMetadata("/contact"),
 }
 
 export default function ContactPage() {
@@ -19,7 +21,7 @@ export default function ContactPage() {
         <div className="text-center">
           <h1 className="font-heading text-3xl font-bold text-foreground sm:text-4xl">Get in touch</h1>
           <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-            Questions about a vehicle, finance or part-exchange? We&apos;re here to help.
+            Questions about a vehicle, independent finance or part-exchange? We&apos;re here to help.
           </p>
         </div>
 

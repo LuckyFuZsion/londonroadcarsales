@@ -7,10 +7,12 @@ import { VehicleGrid } from "@/components/vehicle-grid"
 import { getPublicVehicles } from "@/lib/vehicles"
 import { business } from "@/lib/business"
 import { filterAndSortVehicles, type StockSearchParams } from "@/lib/stock-filter"
+import { canonicalMetadata } from "@/lib/seo"
 
 export const metadata: Metadata = {
-  title: `Used Cars for Sale in Grantham | ${business.name}`,
+  title: "Used cars for sale in Grantham",
   description: `Quality used cars for sale in Grantham, Lincolnshire. Every car comes with 12 months MOT, a full service and our comprehensive in-house warranty.`,
+  ...canonicalMetadata("/used-cars-grantham"),
 }
 
 interface PageProps {

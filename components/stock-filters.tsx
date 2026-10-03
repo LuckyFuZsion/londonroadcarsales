@@ -26,8 +26,8 @@ interface StockFiltersProps {
 const PRICE_BANDS = [
   { label: "Any price", min: "", max: "" },
   { label: "Under £5,000", min: "", max: "5000" },
-  { label: "£5,000 – £10,000", min: "5000", max: "10000" },
-  { label: "£10,000 – £15,000", min: "10000", max: "15000" },
+  { label: "£5,000 - £10,000", min: "5000", max: "10000" },
+  { label: "£10,000 - £15,000", min: "10000", max: "15000" },
   { label: "Over £15,000", min: "15000", max: "" },
 ]
 
@@ -190,7 +190,7 @@ export function StockFilters({ makes, lockedType }: StockFiltersProps) {
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger
             render={
-              <Button variant="outline" className="w-full gap-2 bg-card">
+              <Button variant="outline" className="h-11 w-full gap-2 bg-card">
                 <SlidersHorizontal className="size-4" aria-hidden="true" />
                 Filters
                 {activeCount > 0 ? (
@@ -201,8 +201,8 @@ export function StockFilters({ makes, lockedType }: StockFiltersProps) {
               </Button>
             }
           />
-          <SheetContent side="left" className="w-80 overflow-y-auto">
-            <SheetTitle className="text-left">Filter stock</SheetTitle>
+          <SheetContent side="left" className="w-[min(100%,20rem)] overflow-y-auto p-5 pt-6">
+            <SheetTitle className="pr-10 text-left">Filter stock</SheetTitle>
             <div className="mt-6">{content}</div>
           </SheetContent>
         </Sheet>

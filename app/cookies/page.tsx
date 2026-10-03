@@ -3,10 +3,12 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { ContactActions } from "@/components/contact-actions"
 import { business } from "@/lib/business"
+import { canonicalMetadata } from "@/lib/seo"
 
 export const metadata: Metadata = {
-  title: `Cookie Policy | ${business.name}`,
+  title: "Cookie policy",
   description: `How ${business.name} uses cookies on this website.`,
+  ...canonicalMetadata("/cookies"),
 }
 
 export default function CookiesPage() {
@@ -29,9 +31,13 @@ export default function CookiesPage() {
           <section>
             <h2 className="font-heading text-lg font-bold text-foreground">Cookies we use</h2>
             <p className="mt-2">
-              This website uses only strictly necessary cookies required for core functionality, such as
-              remembering your filter selections while browsing stock. We do not currently use analytics,
-              advertising or tracking cookies.
+              We use strictly necessary cookies for core site features, including the admin sign-in session on
+              /admin pages. Stock filters may keep short-lived preferences in your browser.
+            </p>
+            <p className="mt-2">
+              In production we also use Vercel Web Analytics to understand how the site is used. That product is
+              designed to avoid personal advertising cookies. We do not run advertising or third-party marketing
+              trackers.
             </p>
           </section>
 

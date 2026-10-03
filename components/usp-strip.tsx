@@ -1,11 +1,14 @@
-import { ShieldCheck, Wrench, BadgeCheck, MapPin } from "lucide-react"
-import { business, formattedAddress } from "@/lib/business"
+import { ShieldCheck, Wrench, BadgeCheck, Banknote } from "lucide-react"
 
 const items = [
   { icon: BadgeCheck, title: "12 months MOT", description: "On every vehicle we sell" },
   { icon: Wrench, title: "Full service", description: "Checked and serviced before sale" },
   { icon: ShieldCheck, title: "In-house warranty", description: "Comprehensive cover included" },
-  { icon: MapPin, title: formattedAddress(), description: `Visit our forecourt in ${business.address.town}` },
+  {
+    icon: Banknote,
+    title: "Independent finance",
+    description: "Arranged through an independent facility, subject to status",
+  },
 ]
 
 export function UspStrip() {

@@ -3,10 +3,12 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { ContactActions } from "@/components/contact-actions"
 import { business } from "@/lib/business"
+import { canonicalMetadata } from "@/lib/seo"
 
 export const metadata: Metadata = {
-  title: `Privacy Policy | ${business.name}`,
+  title: "Privacy policy",
   description: `How ${business.name} collects, uses and protects your personal information.`,
+  ...canonicalMetadata("/privacy"),
 }
 
 export default function PrivacyPage() {

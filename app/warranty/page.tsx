@@ -4,10 +4,12 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { ContactActions } from "@/components/contact-actions"
 import { business } from "@/lib/business"
+import { canonicalMetadata } from "@/lib/seo"
 
 export const metadata: Metadata = {
-  title: `Our Warranty | ${business.name}`,
-  description: `Every vehicle from ${business.name} comes with 12 months MOT, a full service and our comprehensive in-house warranty. Here's what's covered.`,
+  title: "Our warranty",
+  description: `Every vehicle from ${business.name} comes with 12 months MOT, a full service and our comprehensive in-house warranty. Here is what is covered.`,
+  ...canonicalMetadata("/warranty"),
 }
 
 const coverage = [
