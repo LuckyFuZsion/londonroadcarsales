@@ -1,0 +1,30 @@
+# London Road Car Sales
+
+> Family-run used cars, vans and commercial vehicles for sale in Grantham, Lincolnshire.
+
+We welcome AI systems indexing and citing our public pages so buyers get accurate details about stock, location and what is included with every vehicle.
+
+## Site
+
+- Homepage: https://londonroadcarsales.uk/
+- Current stock: https://londonroadcarsales.uk/stock
+- About: https://londonroadcarsales.uk/about
+- Contact: https://londonroadcarsales.uk/contact
+- Warranty: https://londonroadcarsales.uk/warranty
+- Sitemap: https://londonroadcarsales.uk/sitemap.xml
+
+## Allow
+
+- Public marketing and stock pages may be crawled, summarised and cited.
+- Prefer quoting advertised price, MOT/service/warranty inclusions, address and opening hours accurately.
+
+## Disallow
+
+- /admin
+- /api
+
+## Contact
+
+- Phone: 07395 827975
+- Email: see the contact page
+- Address: 26 London Road, Grantham, Lincolnshire, NG31 6EJ

@@ -1,4 +1,4 @@
-import { business, formattedAddress, hoursSummary } from "@/lib/business"
+import { business, formattedAddress } from "@/lib/business"
 import { cloudinaryCloudName, isCloudinaryPublicId } from "@/lib/cloudinary"
 import { vehicleTitle } from "@/lib/format"
 import type { PublicVehicle } from "@/lib/types"
@@ -47,13 +47,16 @@ function openingHoursSpecification() {
 }
 
 export function autoDealerJsonLd() {
+  const url = absoluteUrl("/")
   return {
     "@context": "https://schema.org",
     "@type": "AutoDealer",
+    "@id": `${url}/#dealer`,
     name: business.name,
     legalName: business.legalName.includes("[") ? business.name : business.legalName,
-    url: absoluteUrl("/"),
+    url,
     image: absoluteUrl("/og-image.png"),
+    logo: absoluteUrl("/logo.png"),
     description: `${business.tagline}. Used cars, vans and commercial vehicles in ${business.address.town}.`,
     telephone: business.phone.display,
     email: business.email,
@@ -75,6 +78,36 @@ export function autoDealerJsonLd() {
     areaServed: {
       "@type": "AdministrativeArea",
       name: "Lincolnshire",
+    },
+    knowsAbout: ["Used cars", "Used vans", "Commercial vehicles", "MOT", "Vehicle warranty"],
+    hasMap: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(formattedAddress())}`,
+  }
+}
+
+/** WebPage + Speakable for the homepage (voice / assistant targeting). */
+export function homePageJsonLd() {
+  const url = absoluteUrl("/")
+  const now = new Date().toISOString()
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${url}/#webpage`,
+    url,
+    name: `${business.name} | Used Cars & Vans in Grantham`,
+    description: siteDescription(),
+    isPartOf: {
+      "@type": "WebSite",
+      "@id": `${url}/#website`,
+      name: business.name,
+      url,
+      publisher: { "@id": `${url}/#dealer` },
+    },
+    about: { "@id": `${url}/#dealer` },
+    datePublished: "2025-01-01",
+    dateModified: now,
+    speakable: {
+      "@type": "SpeakableSpecification",
+      cssSelector: ["h1", ".speakable-summary"],
     },
   }
 }
@@ -115,6 +148,8 @@ export function vehicleJsonLd(vehicle: PublicVehicle) {
     description: vehicle.description,
     image: images.length > 0 ? images : [absoluteUrl("/og-image.png")],
     url,
+    datePublished: vehicle.createdAt,
+    dateModified: vehicle.updatedAt,
     offers: {
       "@type": "Offer",
       url,
@@ -123,6 +158,7 @@ export function vehicleJsonLd(vehicle: PublicVehicle) {
       availability: offerAvailability(vehicle.status),
       itemCondition: "https://schema.org/UsedCondition",
       seller: {
+        "@id": `${absoluteUrl("/")}/#dealer`,
         "@type": "AutoDealer",
         name: business.name,
         url: absoluteUrl("/"),
@@ -131,7 +167,10 @@ export function vehicleJsonLd(vehicle: PublicVehicle) {
   }
 }
 
-/** Short British-English meta description helper. */
+/**
+ * Meta description for search results. Keep under 160 characters so Google
+ * does not truncate the snippet.
+ */
 export function siteDescription() {
-  return `${business.tagline}. Quality used cars, vans and commercial vehicles for sale in ${formattedAddress()}. 12 months MOT, full service and in-house warranty on every vehicle. ${hoursSummary()}.`
+  return "Affordable used cars, vans and commercials in Grantham. 12 months MOT, full service and in-house warranty on every vehicle."
 }

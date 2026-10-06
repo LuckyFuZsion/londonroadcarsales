@@ -10,7 +10,7 @@ export function HomeHero() {
       <div className="absolute inset-0">
         <Image
           src="/vehicles/ranger/1.png"
-          alt=""
+          alt="Used commercial vehicle on the London Road Car Sales forecourt in Grantham"
           fill
           priority
           className="object-cover opacity-25"

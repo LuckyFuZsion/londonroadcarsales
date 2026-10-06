@@ -59,7 +59,12 @@ export function VehicleGallery({ images, alt }: { images: VehicleImageType[]; al
                 index === active && "ring-primary",
               )}
             >
-              <VehicleImage image={image} alt="" sizes="15vw" className="object-cover" />
+              <VehicleImage
+                image={image}
+                alt={`${alt} - thumbnail ${index + 1}`}
+                sizes="15vw"
+                className="object-cover"
+              />
             </button>
           ))}
         </div>

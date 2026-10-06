@@ -26,7 +26,7 @@ const coverage = [
   {
     icon: Clock,
     title: "12 months MOT included",
-    body: "Every car, van and commercial vehicle is supplied with a fresh 12-month MOT as standard - one less thing to think about in your first year of ownership.",
+    body: "Every car, van and commercial vehicle is supplied with a fresh 12-month MOT as standard - one less thing to think about in your first year of ownership. You can also review MOT history yourself on the official GOV.UK check service.",
   },
   {
     icon: PhoneCall,
@@ -68,7 +68,16 @@ export default function WarrantyPage() {
             <a href={business.phone.href} className="font-semibold text-primary">
               {business.phone.display}
             </a>{" "}
-            and we&apos;ll happily talk you through exactly what&apos;s included.
+            and we&apos;ll happily talk you through exactly what&apos;s included. For official MOT history, use{" "}
+            <a
+              href="https://www.gov.uk/check-mot-history"
+              className="font-semibold text-primary underline-offset-4 hover:underline"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              GOV.UK Check MOT history
+            </a>
+            .
           </p>
         </div>
       </main>
